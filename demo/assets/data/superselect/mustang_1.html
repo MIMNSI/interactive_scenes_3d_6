@@ -44,6 +44,33 @@
       justify-content: center;
     }
 
+    /* Option picker like quickview */
+    .option-picker {
+      margin-bottom: 10px;
+      left: 50px;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.8); /* Frosty black glass effect */
+      backdrop-filter: blur(5px);
+      border-radius: 5px;
+    }
+
+    .option-button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #90EE90; /* Light green */
+      color: #333;
+      font-weight: bold;
+    }
+
+    .option-button.active {
+      background-color: #006400; /* Dark green */
+      color: #fff;
+    }
+
     #toggleCameraModeContainer {
       margin-bottom: 10px;
     }
@@ -238,6 +265,7 @@
       touch-action: none;
     }
 
+
   </style>
 </head>
 <body>
@@ -256,21 +284,27 @@
   <div id="hotspotContent"></div>
   <div id="infoPopup"></div>
   <!-- Scroll Controls -->
+
+  
   
   <div id="scrollControls">
     <!-- Scroll Controls Content -->
         <div id="toggleCameraModeContainer">
-      <button id="toggleCameraMode" onclick="toggleCameraMode()">Mode: Tour</button>
+      <button id="toggleCameraMode" onclick="toggleCameraMode()">Mode: Auto</button>
     </div>
     <div id="scrollControlsContent">
-      <div id="scrollPercentage">0%</div>
-      <div id="progressBarContainer">
+      <!--<div id="scrollPercentage">0%</div>-->
+      <!--<div id="progressBarContainer">
         <div id="progressBar"></div>
+      </div>-->
+      <div class="option-picker">
+        <button class="option-button active">Flythrough</button>
+        <button class="option-button">Explore</button>
       </div>
-      <div id="scrollButtons">
+      <!--<div id="scrollButtons">
         <button class="button" onclick="handleButtonScroll(-1)">◀ Prev</button>
         <button class="button" onclick="handleButtonScroll(1)">Next ▶</button>
-      </div>
+      </div>-->
     </div>
     <div id="exploreControlsContent">
       <p>Use WASD to move and mouse to look around</p>
@@ -289,7 +323,7 @@
     const allowedCameraModes = ["tour","explore","auto"];
     let loopMode = true;
     let autoPlaySpeed = 0.05;
-    let autoPlayEnabled = false;
+    let autoPlayEnabled = true;
 
     // Function to update scroll controls visibility
     function updateScrollControlsVisibility() {
@@ -303,6 +337,34 @@
         exploreControlsContent.classList.add('hidden');
       }
     }
+
+
+    //Function to handle camera mode picker
+
+    const optionButtons = document.querySelectorAll('.option-button');
+
+    optionButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        optionButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');   
+
+
+        // Add your logic here to handle the selected option
+        const selectedOption = button.textContent;
+        console.log('Selected option:', selectedOption);
+
+        // For example, you could trigger different actions based on the selected option:
+        if (selectedOption === 'Flythrough') {
+          // Do something for the "Object" option
+          userControl = false;
+          BABYLON.VirtualJoystick.Canvas.style.zIndex = "-10";
+        } else if (selectedOption === 'Explore') {
+          // Do something for the "AR" option
+          userControl = true;
+          BABYLON.VirtualJoystick.Canvas.style.zIndex = "10";
+        }
+      });
+    });
 
     // Function to toggle camera mode
     function toggleCameraMode() {
@@ -388,6 +450,10 @@
     if (isMobileDevice) {
       var leftJoystick = new BABYLON.VirtualJoystick(true);
       var rightJoystick = new BABYLON.VirtualJoystick(false);
+      leftJoystick.setPosition(150, 300);
+      leftJoystick.alwaysVisible = true;
+      rightJoystick.setPosition(800, 300);
+      rightJoystick.alwaysVisible = true;
       if('tour' === 'tour'){
       if(BABYLON.VirtualJoystick.Canvas){
           BABYLON.VirtualJoystick.Canvas.style.zIndex = "-10";
@@ -434,7 +500,7 @@
             pitch -= deltaY / angularSensibility;
         
             // Clamp the pitch to prevent rolling
-            const maxPitch = Math.PI / 2; // Maximum pitch angle (90 degrees)
+            const maxPitch = Math.PI / 30; // Maximum pitch angle (90 degrees)
             pitch = Math.max(-maxPitch, Math.min(maxPitch, pitch));
         
             // Update the camera's rotation quaternion without introducing roll
