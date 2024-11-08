@@ -25,7 +25,7 @@
     #infoPopup {
       position: absolute;
       bottom: 35px;
-      right: 10px;
+      left: 10%;
       background-color: rgba(0,0,0,0.7);
       color: white;
       border: none;
@@ -281,29 +281,29 @@
   <div id="infoPopup"></div>
   <!-- Scroll Controls -->
   
-  <div id="scrollControls">
-    <!-- Scroll Controls Content -->
+  <!--<div id="scrollControls">
+   
         <div id="toggleCameraModeContainer">
-      <!--<button id="toggleCameraMode" onclick="toggleCameraMode()">Mode: Auto</button>-->
+      <button id="toggleCameraMode" onclick="toggleCameraMode()">Mode: Auto</button>
     </div>
     <div id="scrollControlsContent">
       <div id="scrollPercentage">0%</div>
       <div id="progressBarContainer">
         <div id="progressBar"></div>
       </div>
-      <!--<div class="option-picker">
+      <div class="option-picker">
         <button class="option-button active">Flythrough</button>
         <button class="option-button">Explore</button>
       </div>
-      div id="scrollButtons">
+      <div id="scrollButtons">
         <button class="button" onclick="handleButtonScroll(-1)">◀ Prev</button>
         <button class="button" onclick="handleButtonScroll(1)">Next ▶</button>
       </div>
-    </div>-->
+    </div>
     <div id="exploreControlsContent">
       <p>Use WASD to move and mouse to look around</p>
     </div>
-  </div>
+  </div>-->
   
   <!-- Mute Button -->
   <button id="muteButton">🔊 Mute</button>
@@ -319,48 +319,7 @@
     let autoPlaySpeed = 0.21;
     let autoPlayEnabled = true;
 
-    // Function to update scroll controls visibility
-    function updateScrollControlsVisibility() {
-    const scrollControlsContent = document.getElementById('scrollControlsContent');
-      const exploreControlsContent = document.getElementById('exploreControlsContent');
-      if (cameraMode === 'explore') {
-        scrollControlsContent.classList.add('hidden');
-        exploreControlsContent.classList.remove('hidden');
-      } else {
-        scrollControlsContent.classList.remove('hidden');
-        exploreControlsContent.classList.add('hidden');
-      }
-    }
-
-    // Function to toggle camera mode
-    function toggleCameraMode() {
-      const currentIndex = allowedCameraModes.indexOf(cameraMode);
-      const nextIndex = (currentIndex + 1) % allowedCameraModes.length;
-      cameraMode = allowedCameraModes[nextIndex];
-
-      const toggleButton = document.getElementById('toggleCameraMode');
-      if (toggleButton) {
-        toggleButton.textContent = 'Mode: ' + cameraMode.charAt(0).toUpperCase() + cameraMode.slice(1);
-      }
-      // Additional logic to handle camera mode change
-      if (cameraMode === 'tour') {
-        userControl = false;
-      } else if (cameraMode === 'explore') {
-        userControl = true;
-      }
-
-      if(BABYLON.VirtualJoystick.Canvas && (cameraMode === 'explore' || cameraMode === 'auto')){ 
-            BABYLON.VirtualJoystick.Canvas.style.zIndex = "10";
-        } else if (BABYLON.VirtualJoystick.Canvas && cameraMode === 'tour' ){
-            BABYLON.VirtualJoystick.Canvas.style.zIndex = "-10";
-        }
-
-      // For 'auto' mode, userControl will be dynamically updated based on user interactions
-      updateScrollControlsVisibility();
-      console.log('Camera Mode:', cameraMode);
-    }
-
-    updateScrollControlsVisibility();
+    
 
     const preloader = document.getElementById('preloader');
     const canvas = document.getElementById('renderCanvas');
