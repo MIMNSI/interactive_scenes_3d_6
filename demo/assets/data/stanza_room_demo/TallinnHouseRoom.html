@@ -3,13 +3,13 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Stanza Tallinn House | Terrace</title>
+  <title>Stanza Tallinn House | Room</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <style>
     /* Your existing CSS styles */
     body, html { margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%; font-family: Arial, sans-serif; }
     #renderCanvas { width: 100%; height: 100%; touch-action: none; }
-
+  
     .ui-overlay {
       position: absolute;
       top: 10px;
@@ -22,8 +22,7 @@
       font-size: 14px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-
-
+    
     #hotspotContent {
       position: fixed;
       background-color: rgba(0, 0, 0, 0.8);
@@ -290,16 +289,15 @@
   <canvas id="renderCanvas"></canvas>
   <!-- Movement Instructions -->
   
-   <div class="ui-overlay">
+  <div class="ui-overlay">
     <p><strong>Controls:</strong></p>
     <p>• Mouse: Look around</p>
     <p>• Scroll: Move along path</p>
   </div>
-
-
+  
   <!-- Hotspot and Info Popup -->
   <div id="hotspotContent"></div>
-  <div id="infoPopup"></div>
+  
   <!-- Scroll Controls -->
   
   <!--<div id="scrollControls">
@@ -337,10 +335,10 @@
     let cameraMode = 'tour';
     const allowedCameraModes = ["tour"];
     let loopMode = true;
-    let autoPlaySpeed = 0.18;
+    let autoPlaySpeed = 0.24;
     let autoPlayEnabled = true;
 
-    
+   
 
     const preloader = document.getElementById('preloader');
     const canvas = document.getElementById('renderCanvas');
@@ -354,21 +352,21 @@
     // Create the camera
     const camera = new BABYLON.UniversalCamera(
       'camera',
-      new BABYLON.Vector3(21.443951459895377, -8.265889256556655, -2.948045660291122),
+      new BABYLON.Vector3(-0.3744921208069676, 5.245441655094718, -0.7560030400939701),
       scene
     );
     camera.attachControl(canvas, true);
 
     // Adjust camera sensitivity
-    camera.speed = 0.5;
+    camera.speed = 0.25;
     camera.angularSensibility = 4000;
 
     // Initialize rotationQuaternion with the first waypoint's rotation
     camera.rotationQuaternion = new BABYLON.Quaternion(
-      -0.02817488167130738,
-      0.9382702036129691,
-      -0.07876282165946379,
-      -0.33563614075234005
+      0.0973069126848361,
+      -0.24224833415816588,
+      0.024427061269956897,
+      0.9650131750494668
     ).normalize();
 
     // Ensure Euler angles match the quaternion
@@ -409,7 +407,7 @@
           if(leftJoystick.pressed){
             userControl = true;
             const deltaTime = engine.getDeltaTime() / 1000;
-            const moveSpeed = deltaTime * 5 * 0.5;
+            const moveSpeed = deltaTime * 5 * 0.25;
         
             // Get the movement values from the joystick
             const moveX = leftJoystick.deltaPosition.x * moveSpeed;
@@ -430,7 +428,7 @@
             const deltaX = rightJoystick.deltaPosition.x;
             const deltaY = rightJoystick.deltaPosition.y;
         
-            const angularSensibility = 200 * 0.5; // Adjust rotation speed
+            const angularSensibility = 200 * 0.25; // Adjust rotation speed
         
             // Get current yaw and pitch from the camera's rotation quaternion
             const currentEuler = camera.rotationQuaternion.toEulerAngles();
@@ -464,7 +462,7 @@
     let scrollTarget = 0.01; // Start with a small value to enable scrolling
 
     // Prepare waypoints and rotations
-    const waypoints = [{"x":21.443951459895377,"y":-8.265889256556655,"z":-2.948045660291122,"rotation":{"_isDirty":true,"_x":-0.02817488167130738,"_y":0.9382702036129691,"_z":-0.07876282165946379,"_w":-0.33563614075234005},"interactions":[],"triggerDistance":1},{"x":19.34216218596245,"y":-7.6122247712034135,"z":-7.337355737855361,"rotation":{"_isDirty":true,"_x":-0.0037876561041055665,"_y":0.9856148978915347,"_z":-0.022289229522606365,"_w":-0.167487662121082},"interactions":[],"triggerDistance":1},{"x":18.545072366568117,"y":-7.822809963390994,"z":-13.938466297006853,"rotation":{"_isDirty":true,"_x":0.02416217581459185,"_y":-0.742004913915546,"_z":0.026781935840229483,"_w":0.6694233525189706},"interactions":[],"triggerDistance":1},{"x":15.698750570098861,"y":-7.792904815047819,"z":-18.76282853600129,"rotation":{"_isDirty":true,"_x":0.015613614094632551,"_y":-0.2288079784245183,"_z":0.0036703742597264384,"_w":0.9733394333001116},"interactions":[],"triggerDistance":null},{"x":10.534173201237904,"y":-7.82110748104975,"z":-7.862000188936026,"rotation":{"_isDirty":true,"_x":0.03737455687528205,"_y":-0.17730764574043412,"_z":0.006738503902361013,"_w":0.9834224594880466},"interactions":[{"id":"interaction-1731036227617","type":"info","data":{"text":"Cooking Area with Refrigerator and Microwave Oven"}}],"triggerDistance":2},{"x":12.74396791378728,"y":-7.8959302299238265,"z":-4.341006481234035,"rotation":{"_isDirty":true,"_x":0.049875188967097535,"_y":-0.34484997434011055,"_z":0.01835289641542174,"_w":0.9371521391515288},"interactions":[],"triggerDistance":2},{"x":10.424297616293856,"y":-8.393582741338989,"z":-4.691159192231478,"rotation":{"_isDirty":true,"_x":0.031072345212691217,"_y":-0.1476153950522059,"_z":0.004639903434832042,"_w":0.988545737840531},"interactions":[],"triggerDistance":1},{"x":6.404956043232622,"y":-7.8893963245411864,"z":-6.4296214414659305,"rotation":{"_isDirty":true,"_x":0.02192579079364579,"_y":0.7048456409845905,"_z":-0.021806963313220084,"_w":0.7086863470070177},"interactions":[],"triggerDistance":1},{"x":14.904592215343985,"y":-6.849383329483896,"z":-4.217244884061406,"rotation":{"_isDirty":true,"_x":0.10253531057722533,"_y":0.8606882750223552,"_z":-0.19168780392607132,"_w":0.46038895420054826},"interactions":[{"id":"interaction-1731035683856","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":2},{"x":16.280177760326364,"y":-7.010566218312659,"z":-4.064861385175063,"rotation":{"_isDirty":true,"_x":0.10761848239733018,"_y":0.8753677892314063,"_z":-0.22853565922561556,"_w":0.4122146871290847},"interactions":[{"id":"interaction-1731035738239","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":2},{"x":21.250542375423194,"y":-8.147101766356664,"z":-4.09909384018709,"rotation":{"_isDirty":true,"_x":-0.05461257803445825,"_y":0.9453754806002941,"_z":-0.2247904538577313,"_w":-0.22967785886895647},"interactions":[{"id":"interaction-1731035762156","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":3},{"x":14.145198798907055,"y":-7.724953813803871,"z":-14.959399408755468,"rotation":{"_isDirty":true,"_x":-0.06269514164199927,"_y":0.9347498972003547,"_z":-0.2804231566303076,"_w":-0.20898517201923703},"interactions":[],"triggerDistance":1},{"x":15.851865202742255,"y":-7.724953813751674,"z":-16.537068366655728,"rotation":{"_isDirty":true,"_x":0.16162420259019358,"_y":-0.7990407153417514,"_z":0.24640467358787185,"_w":0.5241147672001627},"interactions":[{"id":"interaction-1731035834709","type":"info","data":{"text":"Game Area 2"}}],"triggerDistance":3},{"x":9.68464098818471,"y":-7.724953814398527,"z":-15.233494637433157,"rotation":{"_isDirty":true,"_x":0.12638511654780804,"_y":0.8565558548571702,"_z":-0.24967172541694274,"_w":0.4335930111895556},"interactions":[{"id":"interaction-1731035804357","type":"info","data":{"text":"Game Area 2"}}],"triggerDistance":3},{"x":9.426737846980414,"y":-7.797324894800942,"z":-12.303239667331905,"rotation":{"_isDirty":true,"_x":0.005416684736113975,"_y":0.9911960946956021,"_z":-0.12514088366006854,"_w":0.04290362016699602},"interactions":[],"triggerDistance":1},{"x":7.720897224027344,"y":-7.797324894029192,"z":-12.679694380961124,"rotation":{"_isDirty":true,"_x":0.02726011287559199,"_y":0.9663426814244921,"_z":-0.11538015775014818,"_w":0.22831147036643504},"interactions":[],"triggerDistance":1},{"x":12.558297285823649,"y":-7.499317869248225,"z":-14.155162514018258,"rotation":{"_isDirty":true,"_x":-0.06479299205855756,"_y":0.8704574463349144,"_z":-0.11919273009142381,"_w":-0.4731794536891392},"interactions":[],"triggerDistance":1},{"x":10.496216899772904,"y":-7.653281930921564,"z":-15.261585062105974,"rotation":{"_isDirty":true,"_x":0.14018653316260596,"_y":0.6120656677395538,"_z":-0.11139398107166558,"_w":0.770269261541306},"interactions":[],"triggerDistance":1},{"x":11.661318824655819,"y":-8.14661496810616,"z":-10.237735019799388,"rotation":{"_isDirty":true,"_x":0.06383374964384626,"_y":0.8954199464893513,"_z":-0.13642477928450253,"_w":0.41897094342279745},"interactions":[],"triggerDistance":1}];
+    const waypoints = [{"x":-0.3744921208069676,"y":5.245441655094718,"z":-0.7560030400939701,"rotation":{"_isDirty":true,"_x":0.0973069126848361,"_y":-0.24224833415816588,"_z":0.024427061269956897,"_w":0.9650131750494668},"interactions":[],"triggerDistance":1},{"x":-3.2898584955010373,"y":5.2454416550909215,"z":-1.1816988308551257,"rotation":{"_isDirty":true,"_x":0.0032963434930542933,"_y":-0.2167499945152683,"_z":0.0007318857704992179,"_w":0.9762213060266745},"interactions":[],"triggerDistance":1},{"x":-4.491262887472806,"y":5.243518240113239,"z":1.39043299158351,"rotation":{"_isDirty":true,"_x":0.0032963434930542933,"_y":-0.2167499945152683,"_z":0.0007318857704992179,"_w":0.9762213060266745},"interactions":[],"triggerDistance":1},{"x":-5.930064767881391,"y":5.447622525950296,"z":2.8218899616994357,"rotation":{"_isDirty":true,"_x":0.1365405178671486,"_y":-0.18872358597869698,"_z":0.026507159229498194,"_w":0.972130374788019},"interactions":[],"triggerDistance":1},{"x":-10.874130502774573,"y":6.257297582259092,"z":2.070581112909417,"rotation":{"_isDirty":true,"_x":0.1690370980750363,"_y":0.31677930907067176,"_z":-0.05748250972546601,"_w":0.9315433913107539},"interactions":[],"triggerDistance":1},{"x":-11.799360409844164,"y":6.257297581786247,"z":4.413303021791135,"rotation":{"_isDirty":true,"_x":0.1147173636826762,"_y":0.6422172915183416,"_z":-0.09803225795554413,"_w":0.7515228229033899},"interactions":[],"triggerDistance":1},{"x":-11.73027414784426,"y":6.257297581809285,"z":6.562326149256915,"rotation":{"_isDirty":true,"_x":0.07343698907233422,"_y":0.7304415984073132,"_z":-0.07954655677107166,"_w":0.6743399923317804},"interactions":[],"triggerDistance":1},{"x":-5.124140548090067,"y":6.25729758274318,"z":8.376251566450309,"rotation":{"_isDirty":true,"_x":0.05854106170114839,"_y":-0.8468906037237249,"_z":0.09536777020659905,"_w":0.5198598251694284},"interactions":[],"triggerDistance":1},{"x":-2.5874884753596703,"y":6.532868996748863,"z":7.095740824029709,"rotation":{"_isDirty":true,"_x":0.048599738550484134,"_y":-0.7690747476082802,"_z":0.09782608928899572,"_w":0.629755630588966},"interactions":[],"triggerDistance":1},{"x":-1.0838827861500657,"y":5.729298760742116,"z":5.075715820563125,"rotation":{"_isDirty":true,"_x":-0.07171119781173352,"_y":-0.46369875949710576,"_z":-0.037689098895452806,"_w":0.8822814156343205},"interactions":[],"triggerDistance":1},{"x":-1.0358744590814986,"y":4.334991977338327,"z":2.0545315134602435,"rotation":{"_isDirty":true,"_x":0.10239343266882041,"_y":-0.4220313073403512,"_z":0.04804157464607766,"_w":0.8994982866445135},"interactions":[],"triggerDistance":1},{"x":-10.314298829826951,"y":6.157090843689991,"z":3.82135378799906,"rotation":{"_isDirty":true,"_x":-0.06238052403544466,"_y":0.7886604385831106,"_z":0.08114989118864804,"_w":0.6062491880365938},"interactions":[],"triggerDistance":1},{"x":-14.7297302588197,"y":6.290203396157481,"z":6.668903214135141,"rotation":{"_isDirty":true,"_x":0.1460561736453652,"_y":0.6543390912568132,"_z":-0.13085876746811895,"_w":0.7303313842154172},"interactions":[],"triggerDistance":1}];
     const controlPoints = waypoints.map(
       (wp) => new BABYLON.Vector3(wp.x, wp.y, wp.z)
     );
@@ -723,7 +721,7 @@
       });
     };
 
-    let transitionSpeed = 0.52;
+    let transitionSpeed = 0.5;
 
     function updateTransitionSpeed(value) {
       transitionSpeed = parseFloat(value);
@@ -735,6 +733,7 @@
    const infoPopup = document.getElementById('infoPopup');
       infoPopup.innerHTML = `
         <p>${text}</p>
+        <button onclick="hideInfoPopup()" style="width: 100%; padding: 10px; background-color: #4CAF50; border: none; color: white; cursor: pointer; border-radius: 5px;">Close</button>
       `;
       infoPopup.style.display = 'block';
     }
@@ -909,7 +908,7 @@
      });
      }
     // Load the model file
-    BABYLON.SceneLoader.ImportMeshAsync('', '', 'https://mimnsi.github.io/interactive_scenes_3d_6/demo/assets/data/stanza_room_demo/StanzaTerrace.splat', scene)
+    BABYLON.SceneLoader.ImportMeshAsync('', '', 'https://mimnsi.github.io/interactive_scenes_3d_6/demo/assets/data/stanza_room_demo/stanza_room.splat', scene)
       .then((result) => {
         const loadedMeshes = result.meshes;
         loadedMeshes.forEach((mesh) => {
