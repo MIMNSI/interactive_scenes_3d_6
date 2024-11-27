@@ -396,7 +396,42 @@
     ).normalize();
 
     // Ensure Euler angles match the quaternion
-    camera.rotation = camera.rotationQuaternion.toEulerAngles();
+    //camera.rotation = camera.rotationQuaternion.toEulerAngles();
+
+    //Limit camera rotation vertically
+    const MAX_ROTATION = BABYLON.Tools.ToRadians(10);
+    var lastValidMatrix = new BABYLON.Matrix();
+
+    camera.onViewMatrixChangedObservable.add(() => 
+    {
+        var rotation = new BABYLON.Quaternion();
+        var translation = new BABYLON.Vector3();
+        var scaling = new BABYLON.Vector3();
+        var viewMatrix = camera.getViewMatrix();
+        viewMatrix.decompose(scaling, rotation, translation);
+        var euler = rotation.toEulerAngles();
+
+        if(Math.abs(euler.x) > MAX_ROTATION || Math.abs(euler.z) > MAX_ROTATION)
+        {
+            //Use last valid matrix.
+
+            var rotationMatrix = viewMatrix.getRotationMatrix().invert();
+            var oldRotationMatrix = lastValidMatrix.getRotationMatrix();
+            var oldRotationEuler = BABYLON.Quaternion.FromRotationMatrix(oldRotationMatrix).toEulerAngles();
+            oldRotationEuler.y = euler.y;
+            var newQuaternion = BABYLON.Quaternion.FromEulerAngles(oldRotationEuler.x, oldRotationEuler.y, oldRotationEuler.z);
+            BABYLON.Matrix.FromQuaternionToRef(newQuaternion, oldRotationMatrix);
+            var finalMatrix = viewMatrix.multiply(rotationMatrix).multiply(oldRotationMatrix);
+
+            viewMatrix.copyFrom(finalMatrix);
+            lastValidMatrix.copyFrom(finalMatrix);
+        }
+        else
+        {
+            //Copy last valid matrix
+            lastValidMatrix.copyFrom(viewMatrix);
+        }
+    });
 
     // Enable WASD keys for movement
     camera.keysUp.push(87); // W
@@ -412,6 +447,11 @@
     // Variables to manage camera control state
     let userControl = cameraMode === 'manual explore';
     let animatingToPath = false;
+
+    //Limit Vertical movement when looking in an upward or downward direction
+    camera.onAfterCheckInputsObservable.add(() => {
+        camera.cameraDirection.y = 0;
+    });
 
     const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
       navigator.userAgent.toLowerCase()
@@ -488,7 +528,7 @@
     let scrollTarget = 0.01; // Start with a small value to enable scrolling
 
     // Prepare waypoints and rotations
-    const waypoints = [{"x":21.443951459895377,"y":-7.265889256556645,"z":-2.948045660291122,"rotation":{"_isDirty":true,"_x":-0.028174881671307387,"_y":0.9382702036129693,"_z":-0.0787628216594638,"_w":-0.3356361407523401},"interactions":[],"triggerDistance":1},{"x":19.34216218596245,"y":-7.6122247712034135,"z":-7.337355737855361,"rotation":{"_isDirty":true,"_x":-0.0037876561041055657,"_y":0.9856148978915344,"_z":-0.02228922952260636,"_w":-0.16748766212108196},"interactions":[],"triggerDistance":1},{"x":18.545072366568117,"y":-7.822809963390994,"z":-13.938466297006853,"rotation":{"_isDirty":true,"_x":0.02416217581459185,"_y":-0.742004913915546,"_z":0.026781935840229483,"_w":0.6694233525189706},"interactions":[],"triggerDistance":1},{"x":15.698750570098861,"y":-7.792904815047819,"z":-18.76282853600129,"rotation":{"_isDirty":true,"_x":0.015613614094632555,"_y":-0.22880797842451836,"_z":0.0036703742597264393,"_w":0.9733394333001119},"interactions":[],"triggerDistance":null},{"x":10.534173201237904,"y":-7.82110748104975,"z":-7.862000188936026,"rotation":{"_isDirty":true,"_x":0.03737455687528206,"_y":-0.17730764574043414,"_z":0.006738503902361015,"_w":0.9834224594880469},"interactions":[{"id":"interaction-1731035384185","type":"info","data":{"text":"Cooking Area with Refrigerator and Microwave"}}],"triggerDistance":4},{"x":12.74396791378728,"y":-7.8959302299238265,"z":-4.341006481234035,"rotation":{"_isDirty":true,"_x":0.049875188967097535,"_y":-0.34484997434011055,"_z":0.01835289641542174,"_w":0.9371521391515288},"interactions":[],"triggerDistance":1},{"x":10.424297616293856,"y":-8.393582741338989,"z":-4.691159192231478,"rotation":{"_isDirty":true,"_x":0.031072345212691223,"_y":-0.14761539505220592,"_z":0.004639903434832043,"_w":0.9885457378405312},"interactions":[],"triggerDistance":1},{"x":6.404956043232622,"y":-7.8893963245411864,"z":-6.4296214414659305,"rotation":{"_isDirty":true,"_x":0.02192579079364579,"_y":0.7048456409845905,"_z":-0.021806963313220084,"_w":0.7086863470070177},"interactions":[],"triggerDistance":1},{"x":14.904592215343985,"y":-6.849383329483896,"z":-4.217244884061406,"rotation":{"_isDirty":true,"_x":0.10253531057722533,"_y":0.8606882750223552,"_z":-0.19168780392607132,"_w":0.46038895420054826},"interactions":[{"id":"interaction-1731035683856","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":3},{"x":16.280177760326364,"y":-7.010566218312659,"z":-4.064861385175063,"rotation":{"_isDirty":true,"_x":0.10761848239733018,"_y":0.8753677892314063,"_z":-0.22853565922561556,"_w":0.4122146871290847},"interactions":[{"id":"interaction-1731035738239","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":3},{"x":21.250542375423194,"y":-8.147101766356664,"z":-4.09909384018709,"rotation":{"_isDirty":true,"_x":-0.054612578034458265,"_y":0.9453754806002943,"_z":-0.22479045385773136,"_w":-0.22967785886895653},"interactions":[{"id":"interaction-1731035762156","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":3},{"x":14.145198798907055,"y":-7.724953813803871,"z":-14.959399408755468,"rotation":{"_isDirty":true,"_x":-0.06269514164199927,"_y":0.9347498972003547,"_z":-0.2804231566303076,"_w":-0.20898517201923703},"interactions":[],"triggerDistance":1},{"x":15.851865202742255,"y":-7.724953813751674,"z":-16.537068366655728,"rotation":{"_isDirty":true,"_x":0.16162420259019358,"_y":-0.7990407153417514,"_z":0.24640467358787185,"_w":0.5241147672001627},"interactions":[{"id":"interaction-1731035834709","type":"info","data":{"text":"Game Area 2"}}],"triggerDistance":3},{"x":9.68464098818471,"y":-7.724953814398527,"z":-15.233494637433157,"rotation":{"_isDirty":true,"_x":0.12638511654780804,"_y":0.8565558548571702,"_z":-0.24967172541694274,"_w":0.4335930111895556},"interactions":[{"id":"interaction-1731035804357","type":"info","data":{"text":"Game Area 2"}}],"triggerDistance":3},{"x":9.426737846980414,"y":-7.797324894800942,"z":-12.303239667331905,"rotation":{"_isDirty":true,"_x":0.005416684736113975,"_y":0.9911960946956021,"_z":-0.12514088366006854,"_w":0.04290362016699602},"interactions":[],"triggerDistance":1},{"x":7.720897224027344,"y":-7.797324894029192,"z":-12.679694380961124,"rotation":{"_isDirty":true,"_x":0.02726011287559199,"_y":0.9663426814244921,"_z":-0.11538015775014818,"_w":0.22831147036643504},"interactions":[],"triggerDistance":1},{"x":12.558297285823649,"y":-7.499317869248225,"z":-14.155162514018258,"rotation":{"_isDirty":true,"_x":-0.06479299205855756,"_y":0.8704574463349144,"_z":-0.11919273009142381,"_w":-0.4731794536891392},"interactions":[],"triggerDistance":1},{"x":10.496216899772904,"y":-7.653281930921564,"z":-15.261585062105974,"rotation":{"_isDirty":true,"_x":0.140186533162606,"_y":0.612065667739554,"_z":-0.11139398107166561,"_w":0.7702692615413063},"interactions":[],"triggerDistance":1},{"x":11.661318824655819,"y":-8.14661496810616,"z":-10.237735019799388,"rotation":{"_isDirty":true,"_x":0.06383374964384626,"_y":0.8954199464893513,"_z":-0.13642477928450253,"_w":0.41897094342279745},"interactions":[],"triggerDistance":1}];
+    const waypoints = [{"x":21.443951459895377,"y":-7.265889256556655,"z":-2.948045660291122,"rotation":{"_isDirty":true,"_x":-0.028174881671307387,"_y":0.9382702036129693,"_z":-0.0787628216594638,"_w":-0.3356361407523401},"interactions":[],"triggerDistance":1},{"x":19.34216218596245,"y":-7.6122247712034135,"z":-7.337355737855361,"rotation":{"_isDirty":true,"_x":-0.0037876561041055657,"_y":0.9856148978915344,"_z":-0.02228922952260636,"_w":-0.16748766212108196},"interactions":[],"triggerDistance":1},{"x":18.545072366568117,"y":-7.822809963390994,"z":-13.938466297006853,"rotation":{"_isDirty":true,"_x":0.02416217581459185,"_y":-0.742004913915546,"_z":0.026781935840229483,"_w":0.6694233525189706},"interactions":[],"triggerDistance":1},{"x":15.698750570098861,"y":-7.792904815047819,"z":-18.76282853600129,"rotation":{"_isDirty":true,"_x":0.015613614094632555,"_y":-0.22880797842451836,"_z":0.0036703742597264393,"_w":0.9733394333001119},"interactions":[],"triggerDistance":null},{"x":10.534173201237904,"y":-7.82110748104975,"z":-7.862000188936026,"rotation":{"_isDirty":true,"_x":0.03737455687528206,"_y":-0.17730764574043414,"_z":0.006738503902361015,"_w":0.9834224594880469},"interactions":[{"id":"interaction-1731035384185","type":"info","data":{"text":"Cooking Area with Refrigerator and Microwave"}}],"triggerDistance":4},{"x":12.74396791378728,"y":-7.8959302299238265,"z":-4.341006481234035,"rotation":{"_isDirty":true,"_x":0.049875188967097535,"_y":-0.34484997434011055,"_z":0.01835289641542174,"_w":0.9371521391515288},"interactions":[],"triggerDistance":1},{"x":10.424297616293856,"y":-8.393582741338989,"z":-4.691159192231478,"rotation":{"_isDirty":true,"_x":0.031072345212691223,"_y":-0.14761539505220592,"_z":0.004639903434832043,"_w":0.9885457378405312},"interactions":[],"triggerDistance":1},{"x":6.404956043232622,"y":-7.8893963245411864,"z":-6.4296214414659305,"rotation":{"_isDirty":true,"_x":0.02192579079364579,"_y":0.7048456409845905,"_z":-0.021806963313220084,"_w":0.7086863470070177},"interactions":[],"triggerDistance":1},{"x":14.904592215343985,"y":-6.849383329483896,"z":-4.217244884061406,"rotation":{"_isDirty":true,"_x":0.10253531057722533,"_y":0.8606882750223552,"_z":-0.19168780392607132,"_w":0.46038895420054826},"interactions":[{"id":"interaction-1731035683856","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":3},{"x":16.280177760326364,"y":-7.010566218312659,"z":-4.064861385175063,"rotation":{"_isDirty":true,"_x":0.10761848239733018,"_y":0.8753677892314063,"_z":-0.22853565922561556,"_w":0.4122146871290847},"interactions":[{"id":"interaction-1731035738239","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":3},{"x":21.250542375423194,"y":-8.147101766356664,"z":-4.09909384018709,"rotation":{"_isDirty":true,"_x":-0.054612578034458265,"_y":0.9453754806002943,"_z":-0.22479045385773136,"_w":-0.22967785886895653},"interactions":[{"id":"interaction-1731035762156","type":"info","data":{"text":"Game Area 1"}}],"triggerDistance":3},{"x":14.145198798907055,"y":-7.724953813803871,"z":-14.959399408755468,"rotation":{"_isDirty":true,"_x":-0.06269514164199927,"_y":0.9347498972003547,"_z":-0.2804231566303076,"_w":-0.20898517201923703},"interactions":[],"triggerDistance":1},{"x":15.851865202742255,"y":-7.724953813751674,"z":-16.537068366655728,"rotation":{"_isDirty":true,"_x":0.16162420259019358,"_y":-0.7990407153417514,"_z":0.24640467358787185,"_w":0.5241147672001627},"interactions":[{"id":"interaction-1731035834709","type":"info","data":{"text":"Game Area 2"}}],"triggerDistance":3},{"x":9.68464098818471,"y":-7.724953814398527,"z":-15.233494637433157,"rotation":{"_isDirty":true,"_x":0.12638511654780804,"_y":0.8565558548571702,"_z":-0.24967172541694274,"_w":0.4335930111895556},"interactions":[{"id":"interaction-1731035804357","type":"info","data":{"text":"Game Area 2"}}],"triggerDistance":3},{"x":9.426737846980414,"y":-7.797324894800942,"z":-12.303239667331905,"rotation":{"_isDirty":true,"_x":0.005416684736113975,"_y":0.9911960946956021,"_z":-0.12514088366006854,"_w":0.04290362016699602},"interactions":[],"triggerDistance":1},{"x":7.720897224027344,"y":-7.797324894029192,"z":-12.679694380961124,"rotation":{"_isDirty":true,"_x":0.02726011287559199,"_y":0.9663426814244921,"_z":-0.11538015775014818,"_w":0.22831147036643504},"interactions":[],"triggerDistance":1},{"x":12.558297285823649,"y":-7.499317869248225,"z":-14.155162514018258,"rotation":{"_isDirty":true,"_x":-0.06479299205855756,"_y":0.8704574463349144,"_z":-0.11919273009142381,"_w":-0.4731794536891392},"interactions":[],"triggerDistance":1},{"x":10.496216899772904,"y":-7.653281930921564,"z":-15.261585062105974,"rotation":{"_isDirty":true,"_x":0.140186533162606,"_y":0.612065667739554,"_z":-0.11139398107166561,"_w":0.7702692615413063},"interactions":[],"triggerDistance":1},{"x":11.661318824655819,"y":-8.14661496810616,"z":-10.237735019799388,"rotation":{"_isDirty":true,"_x":0.06383374964384626,"_y":0.8954199464893513,"_z":-0.13642477928450253,"_w":0.41897094342279745},"interactions":[],"triggerDistance":1}];
     const controlPoints = waypoints.map(
       (wp) => new BABYLON.Vector3(wp.x, wp.y, wp.z)
     );
