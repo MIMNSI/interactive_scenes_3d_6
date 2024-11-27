@@ -278,13 +278,13 @@
   <canvas id="renderCanvas"></canvas>
   <!-- Movement Instructions -->
   
-  <div class="ui-overlay">
+ <!-- <div class="ui-overlay">
     <p><strong>Controls:</strong></p>
     <p>• W/A/S/D: Move camera</p>
     <p>• Q/E: Up and Down</p>
     <p>• Mouse: Look around</p>
     <p>• Scroll: Move along path</p>
-  </div>
+  </div> -->
   
   <!-- Hotspot and Info Popup -->
   <div id="hotspotContent"></div>
@@ -294,7 +294,7 @@
   <div id="scrollControls">
     <!-- Scroll Controls Content -->
         <div id="toggleCameraModeContainer">
-      <button id="toggleCameraMode" onclick="toggleCameraMode()">Mode: Tour</button>
+      <!-- <button id="toggleCameraMode" onclick="toggleCameraMode()">Mode: Tour</button> -->
     </div>
     <div id="scrollControlsContent">
       <div id="scrollPercentage">0%</div>
@@ -333,7 +333,7 @@
         scrollControlsContent.classList.add('hidden');
         exploreControlsContent.classList.remove('hidden');
       } else {
-        scrollControlsContent.classList.remove('hidden');
+        scrollControlsContent.classList.add('hidden');
         exploreControlsContent.classList.add('hidden');
       }
     }
