@@ -396,7 +396,42 @@
     ).normalize();
 
     // Ensure Euler angles match the quaternion
-    camera.rotation = camera.rotationQuaternion.toEulerAngles();
+    //camera.rotation = camera.rotationQuaternion.toEulerAngles();
+
+    //Limit camera rotation vertically
+    const MAX_ROTATION = BABYLON.Tools.ToRadians(10);
+    var lastValidMatrix = new BABYLON.Matrix();
+
+    camera.onViewMatrixChangedObservable.add(() => 
+    {
+        var rotation = new BABYLON.Quaternion();
+        var translation = new BABYLON.Vector3();
+        var scaling = new BABYLON.Vector3();
+        var viewMatrix = camera.getViewMatrix();
+        viewMatrix.decompose(scaling, rotation, translation);
+        var euler = rotation.toEulerAngles();
+
+        if(Math.abs(euler.x) > MAX_ROTATION || Math.abs(euler.z) > MAX_ROTATION)
+        {
+            //Use last valid matrix.
+
+            var rotationMatrix = viewMatrix.getRotationMatrix().invert();
+            var oldRotationMatrix = lastValidMatrix.getRotationMatrix();
+            var oldRotationEuler = BABYLON.Quaternion.FromRotationMatrix(oldRotationMatrix).toEulerAngles();
+            oldRotationEuler.y = euler.y;
+            var newQuaternion = BABYLON.Quaternion.FromEulerAngles(oldRotationEuler.x, oldRotationEuler.y, oldRotationEuler.z);
+            BABYLON.Matrix.FromQuaternionToRef(newQuaternion, oldRotationMatrix);
+            var finalMatrix = viewMatrix.multiply(rotationMatrix).multiply(oldRotationMatrix);
+
+            viewMatrix.copyFrom(finalMatrix);
+            lastValidMatrix.copyFrom(finalMatrix);
+        }
+        else
+        {
+            //Copy last valid matrix
+            lastValidMatrix.copyFrom(viewMatrix);
+        }
+    });
 
     // Enable WASD keys for movement
     camera.keysUp.push(87); // W
@@ -412,6 +447,11 @@
     // Variables to manage camera control state
     let userControl = cameraMode === 'manual explore';
     let animatingToPath = false;
+
+    //Limit Vertical movement when looking in an upward or downward direction
+    camera.onAfterCheckInputsObservable.add(() => {
+        camera.cameraDirection.y = 0;
+    });
 
     const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
       navigator.userAgent.toLowerCase()
