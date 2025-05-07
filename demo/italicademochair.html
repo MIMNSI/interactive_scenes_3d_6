@@ -18,7 +18,7 @@
   <style>
 
     body {
-      background-color: #ffffff;
+      background-color: #000000;
       height: 100vh;
       margin: 0px;
     }
@@ -35,12 +35,12 @@
     const mode = parseInt(urlParams.get('mode')) || 0;
 
     const viewer = new GaussianSplats3D.Viewer({
-        'cameraUp': [0.06149, -0.99515, -0.07683],
-        'initialCameraPosition': [-0.62753, -50.67419, -4.12506],
-        'initialCameraLookAt': [5.74367, -45.33398, -15.24137],
+        'cameraUp': [0.00000, -1.00000, 0.00000],
+        'initialCameraPosition': [-0.32800, -0.70984, -0.96904],
+        'initialCameraLookAt': [0.01186, -0.25973, 0.01883],
         'sphericalHarmonicsDegree': 2
     });
-    let path = 'assets/data/italicademochair/italicademochair' + (mode ? '' : '') + '.splat';
+    let path = 'assets/data/italicademochair/cropped_yellowchair' + (mode ? '' : '') + '.ply';
     viewer.addSplatScene(path, {
       'streamView': true
     })
